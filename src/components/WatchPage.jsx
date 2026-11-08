@@ -23,6 +23,8 @@ export default function WatchPage({
   allVideos,
   isBookmarked,
   onToggleBookmark,
+  isLiked: isLikedProp = false,
+  onToggleLike,
   onThumbnailError
 }) {
   const [likes, setLikes] = useState(24500);
@@ -34,6 +36,8 @@ export default function WatchPage({
   const [showNotes, setShowNotes] = useState(false);
   const [noteContent, setNoteContent] = useState("");
   const [noteSaved, setNoteSaved] = useState(false);
+  const [embedDomain, setEmbedDomain] = useState("youtube-nocookie");
+  const [playerKey, setPlayerKey] = useState(0);
 
   // Comments state
   const [commentInput, setCommentInput] = useState("");
@@ -68,18 +72,21 @@ export default function WatchPage({
   useEffect(() => {
     if (video) {
       window.scrollTo({ top: 0, behavior: "smooth" });
-      const saved = localStorage.getItem(`devtube_note_${video.id}`) || "";
+      const saved =
+        localStorage.getItem(`stacktube_note_${video.id}`) ||
+        localStorage.getItem(`devtube_note_${video.id}`) ||
+        "";
       setNoteContent(saved);
-      setIsLiked(false);
+      setIsLiked(isLikedProp);
       setIsDisliked(false);
       setNoteSaved(false);
       setShareCopied(false);
     }
-  }, [video]);
+  }, [video, isLikedProp]);
 
   const handleSaveNote = () => {
     if (video) {
-      localStorage.setItem(`devtube_note_${video.id}`, noteContent);
+      localStorage.setItem(`stacktube_note_${video.id}`, noteContent);
       setNoteSaved(true);
       setTimeout(() => setNoteSaved(false), 2000);
     }
@@ -93,6 +100,9 @@ export default function WatchPage({
   };
 
   const handleLike = () => {
+    if (onToggleLike) {
+      onToggleLike(video);
+    }
     if (isLiked) {
       setLikes((prev) => prev - 1);
       setIsLiked(false);
@@ -164,12 +174,44 @@ export default function WatchPage({
         {/* Embedded YouTube Player */}
         <div className="yt-player-embed-wrap">
           <iframe
-            src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
+            key={`${video.id}_${embedDomain}_${playerKey}`}
+            src={`${embedDomain === "youtube-nocookie" ? "https://www.youtube-nocookie.com/embed" : "https://www.youtube.com/embed"}/${video.id}?autoplay=1&enablejsapi=1&origin=${typeof window !== "undefined" && window.location.origin ? encodeURIComponent(window.location.origin) : ""}&widget_referrer=${typeof window !== "undefined" && window.location.href ? encodeURIComponent(window.location.href) : ""}&rel=0&modestbranding=1&playsinline=1`}
             title={video.title}
             className="yt-player-iframe"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             allowFullScreen
           />
+        </div>
+
+        {/* Player Stream Status & Stream Switcher */}
+        <div className="yt-player-stream-bar">
+          <div className="stream-bar-left">
+            <span className="stream-live-dot" />
+            <span className="stream-label">
+              Playing on DevTube ({embedDomain === "youtube-nocookie" ? "Privacy No-Cookie Stream" : "Standard Stream"})
+            </span>
+          </div>
+
+          <div className="stream-bar-right">
+            <button
+              type="button"
+              className="stream-action-btn"
+              onClick={() => setPlayerKey((k) => k + 1)}
+              title="Reload video player stream"
+            >
+              🔄 Refresh Stream
+            </button>
+
+            <button
+              type="button"
+              className="stream-action-btn"
+              onClick={() => setEmbedDomain((d) => (d === "youtube-nocookie" ? "youtube" : "youtube-nocookie"))}
+              title="Switch embed domain server if your browser has strict cookie rules"
+            >
+              ⚡ Switch to {embedDomain === "youtube-nocookie" ? "Standard Stream" : "No-Cookie Stream"}
+            </button>
+          </div>
         </div>
 
         <div className="yt-watch-content-body">
@@ -293,6 +335,36 @@ export default function WatchPage({
             </a>
           </div>
         </div>
+
+        {/* Project Builder Mode Card */}
+        {video.isProject && (
+          <div className="project-build-banner">
+            <div className="project-build-header">
+              <div className="project-build-title">
+                <span className="project-build-badge">🛠️ BUILD PROJECT</span>
+                <h3>{video.projectTitle || video.title}</h3>
+              </div>
+              {video.difficulty && (
+                <span className="project-difficulty-pill">{video.difficulty}</span>
+              )}
+            </div>
+
+            {video.techStack && video.techStack.length > 0 && (
+              <div className="project-tech-stack-wrap">
+                <span className="project-stack-label">Tech Stack:</span>
+                <div className="project-stack-pills">
+                  {video.techStack.map((tech, i) => (
+                    <span key={i} className="tech-stack-pill">{tech}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="project-build-instructions">
+              <span>💡 <strong>Hands-on Project:</strong> Open your code editor side-by-side with DevTube. Use the <strong>Notes</strong> button above to track your architecture, API keys, and code snippets as you code along!</span>
+            </div>
+          </div>
+        )}
 
         {/* Developer Notes Scratchpad */}
         {showNotes && (

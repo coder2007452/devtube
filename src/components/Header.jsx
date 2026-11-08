@@ -137,10 +137,10 @@ export default function Header({
               <Menu size={22} />
             </button>
 
-            <div className="brand-logo" onClick={resetToHome} title="DevTube Home">
+            <div className="brand-logo" onClick={resetToHome} title="StackTube Home">
               <YouTubeIcon size={28} />
               <span className="brand-text">
-                DevTube<span className="country-pill">IN</span>
+                StackTube<span className="country-pill">IN</span>
               </span>
             </div>
           </div>

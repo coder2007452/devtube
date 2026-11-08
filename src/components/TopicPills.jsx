@@ -11,6 +11,10 @@ export default function TopicPills({
 }) {
   const pills = [
     { id: "all", label: "All (🇮🇳 Indian First)", type: "category" },
+    { id: "tutorials", label: "🛠️ All Tutorials (Projects)", type: "category" },
+    { id: "project_ai", label: "🤖 AI Projects", type: "category" },
+    { id: "project_webdev", label: "🌐 Web Dev Projects", type: "category" },
+    { id: "project_fullstack", label: "💻 Full-Stack Projects", type: "category" },
     { id: "indian_only", label: "🇮🇳 Indian Creators Only", type: "category" },
     { id: "fullstack", label: "💻 Fullstack Web Dev", type: "category" },
     { id: "webdev", label: "🌐 Web Development", type: "category" },

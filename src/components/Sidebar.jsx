@@ -13,7 +13,14 @@ import {
   Globe,
   HelpCircle,
   X,
-  Settings
+  Settings,
+  GraduationCap,
+  FolderGit2,
+  Bot,
+  LayoutGrid,
+  ListVideo,
+  Newspaper,
+  Flame
 } from "lucide-react";
 import { INDIAN_CREATORS } from "../data/mockVideos";
 import YouTubeIcon from "./YouTubeIcon";
@@ -31,7 +38,12 @@ export default function Sidebar({
   resetToHome,
   contentFormat,
   setContentFormat,
-  onOpenShortsPlayer
+  onOpenShortsPlayer,
+  currentView = "home",
+  setCurrentView,
+  watchLaterCount = 0,
+  likedCount = 0,
+  historyCount = 0
 }) {
   const closeDrawer = () => {
     if (setMobileDrawerOpen) {
@@ -40,18 +52,30 @@ export default function Sidebar({
   };
 
   const handleCategoryClick = (catId) => {
+    if (setCurrentView) {
+      setCurrentView("home");
+    }
     setActiveCreatorId(null);
+    if (setContentFormat) {
+      setContentFormat("all");
+    }
     setActiveCategory(catId);
     closeDrawer();
   };
 
   const handleCreatorClick = (creatorId) => {
+    if (setCurrentView) {
+      setCurrentView("home");
+    }
     setActiveCategory("all");
     setActiveCreatorId(activeCreatorId === creatorId ? null : creatorId);
     closeDrawer();
   };
 
   const handleHomeClick = () => {
+    if (setCurrentView) {
+      setCurrentView("home");
+    }
     resetToHome();
     closeDrawer();
   };
@@ -74,10 +98,10 @@ export default function Sidebar({
       >
         {/* Mobile-only Drawer Header */}
         <div className="mobile-drawer-header">
-          <div className="brand-logo" onClick={handleHomeClick} title="DevTube Home">
+          <div className="brand-logo" onClick={handleHomeClick} title="StackTube Home">
             <YouTubeIcon size={26} />
             <span className="brand-text">
-              DevTube<span className="country-pill">IN</span>
+              StackTube<span className="country-pill">IN</span>
             </span>
           </div>
           <button
@@ -90,38 +114,88 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Section 1: Core Navigation (Home, Long Form, Shorts, Subscriptions) */}
+        {/* Section 1: Main Explore & Feed */}
         <div className="sidebar-section">
           <button
             type="button"
             className={`sidebar-item ${
-              activeCategory === "all" && !activeCreatorId && contentFormat === "all"
+              currentView === "home" && activeCategory === "all" && !activeCreatorId && contentFormat === "all"
                 ? "active"
                 : ""
             }`}
             onClick={handleHomeClick}
-            title="Home - All Sections"
+            title="Home - All Feeds"
           >
             <Home size={20} className="sidebar-icon" />
             <span>Home</span>
           </button>
 
-          {/* Dedicated Long Form Section */}
+          {/* Categories Button (Requested by user as in HackerTube reference photo) */}
           <button
             type="button"
-            className={`sidebar-item ${contentFormat === "long" ? "active" : ""}`}
+            className={`sidebar-item ${currentView === "categories" ? "active" : ""}`}
             onClick={() => {
-              setContentFormat("long");
+              if (setCurrentView) setCurrentView("categories");
               closeDrawer();
             }}
-            title="Long Form Courses & Tutorials"
+            title="Browse All Categories"
           >
-            <Video
+            <LayoutGrid
               size={20}
               className="sidebar-icon"
-              style={{ color: contentFormat === "long" ? "var(--flag-saffron)" : "inherit" }}
+              style={{ color: currentView === "categories" ? "#fff" : "var(--flag-saffron)" }}
             />
-            <span>Long Form Videos</span>
+            <span>Categories</span>
+          </button>
+
+          {/* Playlists Button (Requested by user) */}
+          <button
+            type="button"
+            className={`sidebar-item ${currentView === "playlists" ? "active" : ""}`}
+            onClick={() => {
+              if (setCurrentView) setCurrentView("playlists");
+              closeDrawer();
+            }}
+            title="Popular Developer Playlists"
+          >
+            <ListVideo
+              size={20}
+              className="sidebar-icon"
+              style={{ color: currentView === "playlists" ? "#fff" : "var(--yt-blue)" }}
+            />
+            <span>Playlists</span>
+          </button>
+
+          {/* Dev News & Tech Updates (Requested by user: AI/ML, Fullstack, Web Dev updates) */}
+          <button
+            type="button"
+            className={`sidebar-item ${currentView === "news" ? "active" : ""}`}
+            onClick={() => {
+              if (setCurrentView) setCurrentView("news");
+              closeDrawer();
+            }}
+            title="Dev News & Tech Updates (AI/ML, Web Dev, Fullstack)"
+          >
+            <Newspaper
+              size={20}
+              className="sidebar-icon"
+              style={{ color: currentView === "news" ? "#fff" : "#ef4444" }}
+            />
+            <span>Dev News</span>
+            <span
+              style={{
+                marginLeft: "auto",
+                backgroundColor: "#dc2626",
+                color: "#fff",
+                fontSize: "0.65rem",
+                fontWeight: "700",
+                padding: "1px 5px",
+                borderRadius: "4px",
+                letterSpacing: "0.04em"
+              }}
+            >
+              LIVE
+            </span>
           </button>
 
           {/* Dedicated Short Form Section */}
@@ -141,7 +215,7 @@ export default function Sidebar({
 
           <button
             type="button"
-            className={`sidebar-item ${activeCategory === "indian_only" ? "active" : ""}`}
+            className={`sidebar-item ${activeCategory === "indian_only" && currentView === "home" ? "active" : ""}`}
             onClick={() => handleCategoryClick("indian_only")}
             title="Subscriptions"
           >
@@ -150,7 +224,89 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Section 2: "You" (History, Watch Later, Liked) */}
+        {/* Section 2: TUTORIAL & PROJECTS (Dedicated Hands-on Project Section) */}
+        <div className="sidebar-section tutorial-sidebar-section">
+          <div className="sidebar-heading tutorial-heading">
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <GraduationCap size={16} style={{ color: "var(--flag-saffron)" }} />
+              <span>Tutorial</span>
+            </span>
+          </div>
+
+          {/* All Project Tutorials */}
+          <button
+            type="button"
+            className={`sidebar-item tutorial-item ${
+              currentView === "home" && activeCategory === "tutorials" ? "active" : ""
+            }`}
+            onClick={() => handleCategoryClick("tutorials")}
+            title="All Tutorials & Projects to Build"
+          >
+            <FolderGit2
+              size={20}
+              className="sidebar-icon"
+              style={{ color: activeCategory === "tutorials" && currentView === "home" ? "#fff" : "var(--flag-saffron)" }}
+            />
+            <span className="sidebar-item-label">All Tutorials</span>
+            <span className="sidebar-pill-badge project-badge">Build</span>
+          </button>
+
+          {/* AI Projects */}
+          <button
+            type="button"
+            className={`sidebar-item tutorial-item ${
+              currentView === "home" && activeCategory === "project_ai" ? "active" : ""
+            }`}
+            onClick={() => handleCategoryClick("project_ai")}
+            title="AI & Generative AI Projects"
+          >
+            <Bot
+              size={20}
+              className="sidebar-icon"
+              style={{ color: activeCategory === "project_ai" && currentView === "home" ? "#fff" : "#c084fc" }}
+            />
+            <span className="sidebar-item-label">AI Projects</span>
+            <span className="sidebar-pill-badge ai-badge">AI</span>
+          </button>
+
+          {/* Web Development Projects */}
+          <button
+            type="button"
+            className={`sidebar-item tutorial-item ${
+              currentView === "home" && activeCategory === "project_webdev" ? "active" : ""
+            }`}
+            onClick={() => handleCategoryClick("project_webdev")}
+            title="Web Development Projects"
+          >
+            <Code2
+              size={20}
+              className="sidebar-icon"
+              style={{ color: activeCategory === "project_webdev" && currentView === "home" ? "#fff" : "var(--yt-blue)" }}
+            />
+            <span className="sidebar-item-label">Web Dev Projects</span>
+            <span className="sidebar-pill-badge web-badge">Web</span>
+          </button>
+
+          {/* Full-Stack Web Development Projects */}
+          <button
+            type="button"
+            className={`sidebar-item tutorial-item ${
+              currentView === "home" && activeCategory === "project_fullstack" ? "active" : ""
+            }`}
+            onClick={() => handleCategoryClick("project_fullstack")}
+            title="Full-Stack Web Development Projects"
+          >
+            <Layers
+              size={20}
+              className="sidebar-icon"
+              style={{ color: activeCategory === "project_fullstack" && currentView === "home" ? "#fff" : "#34d399" }}
+            />
+            <span className="sidebar-item-label">Full-Stack Projects</span>
+            <span className="sidebar-pill-badge fullstack-badge">Fullstack</span>
+          </button>
+        </div>
+
+        {/* Section 3: "You" (History, Watch Later, Liked) - Full Persistent Features */}
         <div className="sidebar-section">
           <div className="sidebar-heading">
             <span>You &gt;</span>
@@ -158,52 +314,55 @@ export default function Sidebar({
 
           <button
             type="button"
-            className="sidebar-item"
+            className={`sidebar-item ${currentView === "history" ? "active" : ""}`}
             onClick={() => {
-              alert("Watch History: tracking your watched tutorials.");
+              if (setCurrentView) setCurrentView("history");
               closeDrawer();
             }}
-            title="History"
+            title="Watch History"
           >
             <History size={20} className="sidebar-icon" />
-            <span>History</span>
+            <span className="sidebar-item-label">History</span>
+            {historyCount > 0 && <span className="sidebar-count-text">{historyCount}</span>}
           </button>
 
           <button
             type="button"
-            className="sidebar-item"
+            className={`sidebar-item ${currentView === "watch_later" ? "active" : ""}`}
             onClick={() => {
-              setShowBookmarksModal(true);
+              if (setCurrentView) setCurrentView("watch_later");
               closeDrawer();
             }}
             title="Watch Later"
           >
             <Clock size={20} className="sidebar-icon" />
-            <span>Watch Later</span>
+            <span className="sidebar-item-label">Watch Later</span>
+            {watchLaterCount > 0 && <span className="sidebar-count-text">{watchLaterCount}</span>}
           </button>
 
           <button
             type="button"
-            className="sidebar-item"
+            className={`sidebar-item ${currentView === "liked" ? "active" : ""}`}
             onClick={() => {
-              setShowBookmarksModal(true);
+              if (setCurrentView) setCurrentView("liked");
               closeDrawer();
             }}
             title="Liked Videos"
           >
             <ThumbsUp size={20} className="sidebar-icon" />
-            <span>Liked videos</span>
+            <span className="sidebar-item-label">Liked videos</span>
+            {likedCount > 0 && <span className="sidebar-count-text">{likedCount}</span>}
           </button>
         </div>
 
-        {/* Section 3: Subscriptions / 🇮🇳 Indian Tech Creators */}
+        {/* Section 4: Subscriptions / 🇮🇳 Indian Tech Creators */}
         <div className="sidebar-section">
           <div className="sidebar-heading">
             <span>🇮🇳 Indian Tech Creators</span>
           </div>
 
           {INDIAN_CREATORS.map((creator) => {
-            const isSelected = activeCreatorId === creator.id;
+            const isSelected = activeCreatorId === creator.id && currentView === "home";
             return (
               <button
                 type="button"
@@ -216,6 +375,7 @@ export default function Sidebar({
                   src={creator.avatar}
                   alt={creator.name}
                   className="creator-sidebar-avatar"
+                  referrerPolicy="no-referrer"
                 />
                 <div className="creator-meta">
                   <div className="creator-name">{creator.name}</div>
@@ -226,7 +386,7 @@ export default function Sidebar({
           })}
         </div>
 
-        {/* Section 4: Explore (Strictly Fullstack, Web Dev & AI) */}
+        {/* Section 5: Explore (Strictly Fullstack, Web Dev & AI) */}
         <div className="sidebar-section">
           <div className="sidebar-heading">
             <span>Explore Dev</span>
@@ -234,7 +394,7 @@ export default function Sidebar({
 
           <button
             type="button"
-            className={`sidebar-item ${activeCategory === "fullstack" ? "active" : ""}`}
+            className={`sidebar-item ${activeCategory === "fullstack" && currentView === "home" ? "active" : ""}`}
             onClick={() => handleCategoryClick("fullstack")}
             title="Fullstack Web Dev"
           >
@@ -244,7 +404,7 @@ export default function Sidebar({
 
           <button
             type="button"
-            className={`sidebar-item ${activeCategory === "webdev" ? "active" : ""}`}
+            className={`sidebar-item ${activeCategory === "webdev" && currentView === "home" ? "active" : ""}`}
             onClick={() => handleCategoryClick("webdev")}
             title="Web Development"
           >
@@ -254,7 +414,7 @@ export default function Sidebar({
 
           <button
             type="button"
-            className={`sidebar-item ${activeCategory === "ai" ? "active" : ""}`}
+            className={`sidebar-item ${activeCategory === "ai" && currentView === "home" ? "active" : ""}`}
             onClick={() => handleCategoryClick("ai")}
             title="AI & Machine Learning"
           >
@@ -264,7 +424,7 @@ export default function Sidebar({
 
           <button
             type="button"
-            className={`sidebar-item ${activeCategory === "global_only" ? "active" : ""}`}
+            className={`sidebar-item ${activeCategory === "global_only" && currentView === "home" ? "active" : ""}`}
             onClick={() => handleCategoryClick("global_only")}
             title="Global Tech Masters"
           >
@@ -273,7 +433,7 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Section 5: Settings & Feedback */}
+        {/* Section 6: Settings & About */}
         <div className="sidebar-section">
           {setShowSettingsModal && (
             <button
@@ -294,13 +454,13 @@ export default function Sidebar({
             type="button"
             className="sidebar-item"
             onClick={() => {
-              alert("DevTube version 2.0 • Distraction-free coding streams directly from YouTube.");
+              alert("StackTube version 2.0 • Distraction-free coding streams directly from YouTube.");
               closeDrawer();
             }}
-            title="About DevTube"
+            title="About StackTube"
           >
             <HelpCircle size={20} className="sidebar-icon" />
-            <span>About DevTube</span>
+            <span>About StackTube</span>
           </button>
         </div>
       </aside>

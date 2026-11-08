@@ -118,10 +118,11 @@ export default function VideoPlayerModal({
             {/* Embedded YouTube Player */}
             <div className="video-iframe-wrap">
               <iframe
-                src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
+                src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&enablejsapi=1&origin=${typeof window !== "undefined" && window.location.origin ? encodeURIComponent(window.location.origin) : ""}&widget_referrer=${typeof window !== "undefined" && window.location.href ? encodeURIComponent(window.location.href) : ""}&rel=0&modestbranding=1&playsinline=1`}
                 title={video.title}
                 className="video-iframe"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
                 allowFullScreen
               />
             </div>
@@ -328,6 +329,7 @@ export default function VideoPlayerModal({
                       alt={item.title}
                       className="side-thumb"
                       loading="lazy"
+                      referrerPolicy="no-referrer"
                     />
                     <span className="video-duration" style={{ fontSize: "0.65rem", padding: "1px 4px" }}>
                       {item.duration}

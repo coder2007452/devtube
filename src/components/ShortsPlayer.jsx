@@ -126,10 +126,11 @@ export default function ShortsPlayer({
         <div className="shorts-video-frame">
           <iframe
             key={currentShort.id}
-            src={`https://www.youtube.com/embed/${currentShort.id}?autoplay=1&loop=1&playlist=${currentShort.id}&modestbranding=1&rel=0&controls=1`}
+            src={`https://www.youtube-nocookie.com/embed/${currentShort.id}?autoplay=1&loop=1&playlist=${currentShort.id}&modestbranding=1&rel=0&controls=1&enablejsapi=1&origin=${typeof window !== "undefined" && window.location.origin ? encodeURIComponent(window.location.origin) : ""}&widget_referrer=${typeof window !== "undefined" && window.location.href ? encodeURIComponent(window.location.href) : ""}&playsinline=1`}
             title={currentShort.title}
             className="shorts-iframe"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
             allowFullScreen
           />
 

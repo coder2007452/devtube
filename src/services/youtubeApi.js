@@ -345,7 +345,15 @@ export async function getVideos({
       Boolean(v && v.id && v.thumbnail && v.thumbnail.trim() !== "")
     );
 
-    if (category && category !== "all" && category !== "indian_only" && category !== "global_only") {
+    if (category === "tutorials") {
+      sourceVideos = sourceVideos.filter((v) => v.isProject === true);
+    } else if (category === "project_ai") {
+      sourceVideos = sourceVideos.filter((v) => v.isProject === true && (v.projectType === "ai" || v.category === "ai"));
+    } else if (category === "project_webdev") {
+      sourceVideos = sourceVideos.filter((v) => v.isProject === true && (v.projectType === "webdev" || v.category === "webdev"));
+    } else if (category === "project_fullstack") {
+      sourceVideos = sourceVideos.filter((v) => v.isProject === true && (v.projectType === "fullstack" || v.category === "fullstack"));
+    } else if (category && category !== "all" && category !== "indian_only" && category !== "global_only") {
       sourceVideos = sourceVideos.filter((v) => v.category === category);
     }
 
@@ -396,7 +404,15 @@ export async function getVideos({
     return Boolean(v && v.id && v.thumbnail && v.thumbnail.trim() !== "");
   });
 
-  if (category === "indian_only") {
+  if (category === "tutorials") {
+    sourceVideos = sourceVideos.filter((v) => v.isProject === true);
+  } else if (category === "project_ai") {
+    sourceVideos = sourceVideos.filter((v) => v.isProject === true && (v.projectType === "ai" || v.category === "ai"));
+  } else if (category === "project_webdev") {
+    sourceVideos = sourceVideos.filter((v) => v.isProject === true && (v.projectType === "webdev" || v.category === "webdev"));
+  } else if (category === "project_fullstack") {
+    sourceVideos = sourceVideos.filter((v) => v.isProject === true && (v.projectType === "fullstack" || v.category === "fullstack"));
+  } else if (category === "indian_only") {
     sourceVideos = sourceVideos.filter((v) => v.isIndian);
   } else if (category === "global_only") {
     sourceVideos = sourceVideos.filter((v) => !v.isIndian);
@@ -412,7 +428,9 @@ export async function getVideos({
       const matchTopic = (v.topicTag || "").toLowerCase().includes(q);
       const matchTags = (v.tags || []).some((tag) => tag.toLowerCase().includes(q));
       const matchDesc = (v.description || "").toLowerCase().includes(q);
-      return matchTitle || matchChannel || matchTopic || matchTags || matchDesc;
+      const matchProj = (v.projectTitle || "").toLowerCase().includes(q);
+      const matchStack = (v.techStack || []).some((tech) => tech.toLowerCase().includes(q));
+      return matchTitle || matchChannel || matchTopic || matchTags || matchDesc || matchProj || matchStack;
     });
   }
 

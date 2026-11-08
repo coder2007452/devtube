@@ -88,6 +88,7 @@ export default function BookmarksModal({
                   <img
                     src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
                     alt={video.title}
+                    referrerPolicy="no-referrer"
                     style={{
                       width: "68px",
                       height: "38px",

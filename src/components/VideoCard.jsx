@@ -47,6 +47,13 @@ export default function VideoCard({
         {/* Video Duration Badge */}
         <span className="video-duration">{video.duration}</span>
 
+        {/* Project Badge Tag */}
+        {video.isProject && (
+          <span className="project-badge-tag" title="Hands-on Project Tutorial: Build along!">
+            🛠️ Project
+          </span>
+        )}
+
         {/* 🇮🇳 Indian Creator Badge Tag */}
         {video.isIndian && (
           <span className="indian-badge-tag" title="Verified Indian Tech Creator">
@@ -114,6 +121,25 @@ export default function VideoCard({
             <span> • </span>
             <span>{video.publishedAt}</span>
           </div>
+
+          {/* Project Tech Stack Tags */}
+          {video.techStack && video.techStack.length > 0 && (
+            <div className="video-tech-stack-row">
+              {video.techStack.slice(0, 3).map((tech, i) => (
+                <span key={i} className="tech-stack-pill">{tech}</span>
+              ))}
+              {video.techStack.length > 3 && (
+                <span className="tech-stack-pill more">+{video.techStack.length - 3}</span>
+              )}
+            </div>
+          )}
+
+          {/* Hands-on Project Call-to-Action */}
+          {video.isProject && (
+            <div className="start-building-action">
+              <span className="build-action-text">⚡ Start Building</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
