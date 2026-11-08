@@ -213,7 +213,7 @@ export default function Sidebar({
             <span>Shorts</span>
           </button>
 
-          <button
+          {/* <button
             type="button"
             className={`sidebar-item ${activeCategory === "indian_only" && currentView === "home" ? "active" : ""}`}
             onClick={() => handleCategoryClick("indian_only")}
@@ -221,7 +221,7 @@ export default function Sidebar({
           >
             <Tv2 size={20} className="sidebar-icon" />
             <span>Subscriptions</span>
-          </button>
+          </button> */}
         </div>
 
         {/* Section 2: TUTORIAL & PROJECTS (Dedicated Hands-on Project Section) */}

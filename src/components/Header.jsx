@@ -172,7 +172,7 @@ export default function Header({
               </button>
             </form>
 
-            <button
+            {/* <button
               type="button"
               className="icon-btn mic-btn"
               title="Search with voice"
@@ -181,7 +181,7 @@ export default function Header({
               }
             >
               <Mic size={18} />
-            </button>
+            </button> */}
           </div>
 
           {/* Right: Actions */}
@@ -197,7 +197,7 @@ export default function Header({
             </button>
 
             {/* + Create Button (Desktop only) */}
-            <button
+            {/* <button
               type="button"
               className="yt-create-btn"
               onClick={() => alert("DevTube Studio: upload or bookmark your custom YouTube tutorials.")}
@@ -205,7 +205,7 @@ export default function Header({
             >
               <Plus size={16} />
               <span>Create</span>
-            </button>
+            </button> */}
 
             {/* Indian Tech Priority Quick Toggle */}
             <button
@@ -220,7 +220,7 @@ export default function Header({
             </button>
 
             {/* Notifications Bell (Desktop only) */}
-            <button
+            {/* <button
               type="button"
               className="icon-btn badge-counter-wrap header-notification-btn"
               onClick={() => alert("No new notifications. You are caught up on tech feeds!")}
@@ -228,7 +228,7 @@ export default function Header({
             >
               <Bell size={20} />
               <span className="badge-count" style={{ background: "var(--yt-red)" }}>3</span>
-            </button>
+            </button> */}
 
             {/* Watch Later / Bookmarks Counter */}
             <button
